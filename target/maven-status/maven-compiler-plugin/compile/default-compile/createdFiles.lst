@@ -1,4 +1,5 @@
 br\gm\mateus\dukemarket\bean\Produto.class
 connection\MySQLConnection.class
+br\gm\mateus\dukemarket\app\DukeMarketApp.class
 br\gm\mateus\dukemarket\dao\ProdutoDAO.class
 br\gm\mateus\dukemarket\Dukemarket.class

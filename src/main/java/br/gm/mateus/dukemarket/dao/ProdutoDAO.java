@@ -59,8 +59,7 @@ public class ProdutoDAO {
 
             MySQLConnection.closeConnection(conn, stmt);
         }
-        
-    
+    }
 
     public List<Produto> getResults() {
         Connection conn = MySQLConnection.getConnection();
@@ -87,10 +86,96 @@ public class ProdutoDAO {
                 p.setDataCadastro(rs.getString("dataCadastro"));
                 listaProdutos.add(p);
             }
-        }catch (SQLException ex){
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE,null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaProdutos;
     }
 
+    public Produto getResultById(int id) {
+        Connection conn = MySQLConnection.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Produto p = null;
+        try {
+            stmt = conn.prepareStatement(SQL_SELECT_ID);
+            stmt.setInt(1, id);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                p = new Produto();
+                p.setId(rs.getInt("Id"));
+                p.setCodBarras(rs.getString("codBarras"));
+                p.setDescricao(rs.getString("descricao"));
+                p.setQtd(rs.getDouble("qtd"));
+                p.setValorCompra(rs.getDouble("valorCompra"));
+                p.setValorVenda(rs.getDouble("valorVenda"));
+                p.setDataCadastro(rs.getString("dataCadastro"));
+            }
+        } catch (SQLException sQLException) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null,
+                    sQLException);
+        } finally {
+            //Encerra a conexao com o banco e o Statement
+            MySQLConnection.closeConnection(conn, stmt, rs);
+        }
+        return p;
+    }
+
+    public void update(Produto p) {
+        Connection conn = MySQLConnection.getConnection();
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = conn.prepareStatement(SQL_UPDATE);
+            stmt.setString(1, p.getCodBarras());
+            stmt.setString(2, p.getDescricao());
+            stmt.setDouble(3, p.getQtd());
+            stmt.setDouble(4, p.getValorCompra());
+            stmt.setDouble(5, p.getValorVenda());
+            stmt.setInt(6, p.getId());
+            //Executa a Query
+
+            int auxRetorno = stmt.executeUpdate();
+
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.INFO, null,
+                    "Update: " + auxRetorno);
+
+        } catch (SQLException sQLException) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null,
+                    sQLException);
+
+        } finally {
+            MySQLConnection.closeConnection(conn, stmt);
+
+        }
+    }
+
+    public void delete(int id) {
+        Connection conn = MySQLConnection.getConnection();
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = conn.prepareStatement(SQL_DELETE);
+            stmt.setInt(1, id);
+
+            // Execute a query
+            int auxRetorno = stmt.executeUpdate();
+
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.INFO, null,
+                    "Delete:" + auxRetorno);
+        } catch (SQLException sQLException) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null,
+                    sQLException);
+
+        } finally {
+            //Encerra a conexão com o banco e o Statement
+
+            MySQLConnection.closeConnection(conn, stmt);
+
+        }
+
+    }
+
 }
+
